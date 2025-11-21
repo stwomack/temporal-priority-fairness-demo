@@ -1,0 +1,42 @@
+# Git
+.git
+.gitignore
+
+# Documentation
+README.md
+docs/
+*.md
+
+# IDE
+.idea
+.vscode
+*.iml
+*.swp
+*.swo
+
+# Build artifacts
+target/
+node_modules/
+ui/dist/
+ui/node_modules/
+
+# Scripts
+*.sh
+
+# Kubernetes manifests (not needed in image)
+k8s/*
+# But we need nginx.conf for the frontend image
+!k8s/nginx.conf
+
+# Docker files themselves
+Dockerfile*
+.dockerignore
+
+# Environment files
+.env
+.env.local
+
+# OS
+.DS_Store
+Thumbs.db
+

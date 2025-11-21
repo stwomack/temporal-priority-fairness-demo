@@ -1,0 +1,84 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: priority-backend
+  namespace: temporal-priority-demo
+  labels:
+    app: priority-backend
+    component: backend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: priority-backend
+  template:
+    metadata:
+      labels:
+        app: priority-backend
+        component: backend
+    spec:
+      serviceAccountName: priority-backend
+      containers:
+      - name: backend
+        image: docker.io/stwomack/priority-backend:latest  # Update with your registry/image:tag
+        imagePullPolicy: Always
+        ports:
+        - name: http
+          containerPort: 7080
+          protocol: TCP
+        env:
+        - name: TEMPORAL_NAMESPACE
+          value: "default"  # Update with your Temporal namespace
+        - name: TEMPORAL_ADDRESS
+          value: "127.0.0.1:7233"  # Update with your Temporal address
+        - name: SPRING_CONFIG_LOCATION
+          value: "classpath:/application.yaml,file:/app/config/application.yaml"
+        # Uncomment for Temporal Cloud mTLS:
+        # - name: TEMPORAL_KEY_PATH
+        #   value: "/etc/temporal/certs/temporal-client.key"
+        # - name: TEMPORAL_CERT_PATH
+        #   value: "/etc/temporal/certs/temporal-client-cert.pem"
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "500m"
+          limits:
+            memory: "1Gi"
+            cpu: "1000m"
+        livenessProbe:
+          httpGet:
+            path: /actuator/health/liveness
+            port: 7080
+          initialDelaySeconds: 60
+          periodSeconds: 30
+          timeoutSeconds: 5
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /actuator/health/readiness
+            port: 7080
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 3
+          failureThreshold: 3
+        volumeMounts:
+        - name: config
+          mountPath: /app/config
+          readOnly: true
+        # Uncomment for Temporal Cloud mTLS:
+        # - name: temporal-certs
+        #   mountPath: /etc/temporal/certs
+        #   readOnly: true
+      volumes:
+      - name: config
+        configMap:
+          name: priority-backend-config
+      # Uncomment for Temporal Cloud mTLS:
+      # - name: temporal-certs
+      #   secret:
+      #     secretName: temporal-mtls
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        fsGroup: 1000
+
