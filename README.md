@@ -137,3 +137,7 @@ Viewing results
 - Fairness results call `GET /api/run-status-fairness` and show groups labeled `<key> (w=<weight>)`.
 
 ![Priority Results](docs/priority-results.png)
+
+## Kubernetes Deployment
+
+This application can optionally be deployed to Kubernetes. For detailed instructions, see [K8s.md](K8s.md).
