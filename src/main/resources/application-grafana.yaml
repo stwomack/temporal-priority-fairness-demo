@@ -1,0 +1,6 @@
+spring:
+  temporal:
+    namespace: temporal-grafana-demo.sgbpf
+    connection:
+      target: us-west-2.aws.api.temporal.io:7233
+      apiKey: keygoeshere

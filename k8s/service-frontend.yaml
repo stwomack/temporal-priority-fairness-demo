@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: priority-frontend
+  namespace: temporal-priority-demo
+  labels:
+    app: priority-frontend
+    component: frontend
+spec:
+  type: LoadBalancer
+  ports:
+  - name: http
+    port: 80
+    targetPort: 80
+    protocol: TCP
+  selector:
+    app: priority-frontend
+
